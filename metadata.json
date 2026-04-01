@@ -1,0 +1,8 @@
+{
+  "name": "Juris Aprendizado",
+  "description": "A premium productivity and smart learning platform for university students. Features study planning, focus mode, AI-powered notes, and gamified performance tracking.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

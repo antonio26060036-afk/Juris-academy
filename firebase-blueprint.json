@@ -1,0 +1,139 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores student profile information and gamification stats.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "User's full name" },
+        "email": { "type": "string", "description": "User's email address" },
+        "photoURL": { "type": "string", "description": "User's profile picture URL" },
+        "bio": { "type": "string", "description": "User's biography" },
+        "phone": { "type": "string", "description": "User's phone number" },
+        "level": { "type": "integer", "description": "Current student level" },
+        "xp": { "type": "integer", "description": "Total experience points" },
+        "streak": { "type": "integer", "description": "Consecutive days of study" },
+        "coins": { "type": "integer", "description": "Virtual currency for rewards" },
+        "lastStudyDate": { "type": "string", "format": "date-time", "description": "Last time the user completed a study session" },
+        "isVerified": { "type": "boolean", "description": "Whether the user's email/phone is verified" },
+        "twoFactorEnabled": { "type": "boolean", "description": "Whether 2FA is enabled" },
+        "preferences": {
+          "type": "object",
+          "properties": {
+            "theme": { "type": "string", "enum": ["light", "dark"], "description": "UI theme preference" },
+            "notifications": { "type": "boolean", "description": "Enable push notifications" },
+            "language": { "type": "string", "description": "Preferred language (e.g., pt-BR, en-US)" }
+          }
+        },
+        "privacy": {
+          "type": "object",
+          "properties": {
+            "isPublic": { "type": "boolean", "description": "Whether the profile is visible to others" },
+            "dataControl": { "type": "boolean", "description": "Allow data usage for analytics" }
+          }
+        }
+      },
+      "required": ["uid", "displayName", "email", "level", "xp", "streak", "coins"]
+    },
+    "StudySession": {
+      "title": "Study Session",
+      "description": "A record of a completed focus mode session.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The user who studied" },
+        "subject": { "type": "string", "description": "The subject studied (e.g., Civil Law)" },
+        "duration": { "type": "integer", "description": "Duration in minutes" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "When the session occurred" },
+        "xpEarned": { "type": "integer", "description": "XP gained from this session" }
+      },
+      "required": ["userId", "subject", "duration", "timestamp", "xpEarned"]
+    },
+    "Note": {
+      "title": "Note",
+      "description": "Student's study notes and summaries.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The owner of the note" },
+        "title": { "type": "string", "description": "Note title" },
+        "content": { "type": "string", "description": "Markdown content of the note" },
+        "subject": { "type": "string", "description": "Subject category" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["userId", "title", "content", "subject", "createdAt", "updatedAt"]
+    },
+    "Goal": {
+      "title": "Study Goal",
+      "description": "Daily or weekly targets for the student.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The user who set the goal" },
+        "title": { "type": "string", "description": "Goal description (e.g., 50 questions)" },
+        "target": { "type": "integer", "description": "Target value" },
+        "current": { "type": "integer", "description": "Current progress" },
+        "deadline": { "type": "string", "format": "date-time", "description": "When the goal expires" },
+        "completed": { "type": "boolean", "description": "Whether the goal was met" }
+      },
+      "required": ["userId", "title", "target", "current", "deadline", "completed"]
+    },
+    "Flashcard": {
+      "title": "Flashcard",
+      "description": "A study card with a front (question) and back (answer).",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID" },
+        "front": { "type": "string", "description": "Question or term" },
+        "back": { "type": "string", "description": "Answer or definition" },
+        "subject": { "type": "string", "description": "Subject category" },
+        "nextReview": { "type": "string", "format": "date-time", "description": "Next scheduled review date" },
+        "interval": { "type": "integer", "description": "Current interval in days" },
+        "easeFactor": { "type": "number", "description": "Ease factor for spaced repetition" },
+        "repetition": { "type": "integer", "description": "Number of successful repetitions" }
+      },
+      "required": ["userId", "front", "back", "subject", "nextReview", "interval", "easeFactor", "repetition"]
+    },
+    "Material": {
+      "title": "Study Material",
+      "description": "Uploaded PDFs, documents, or images.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID" },
+        "name": { "type": "string", "description": "File name" },
+        "url": { "type": "string", "description": "Download URL" },
+        "type": { "type": "string", "description": "MIME type" },
+        "subject": { "type": "string", "description": "Subject category" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Upload timestamp" },
+        "linkedNotes": { "type": "array", "items": { "type": "string" }, "description": "IDs of linked notes" },
+        "linkedSessions": { "type": "array", "items": { "type": "string" }, "description": "IDs of linked sessions" }
+      },
+      "required": ["userId", "name", "url", "type", "subject", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile documents"
+    },
+    "/study_sessions/{sessionId}": {
+      "schema": "StudySession",
+      "description": "History of study sessions"
+    },
+    "/notes/{noteId}": {
+      "schema": "Note",
+      "description": "User notes"
+    },
+    "/goals/{goalId}": {
+      "schema": "Goal",
+      "description": "User study goals"
+    },
+    "/flashcards/{cardId}": {
+      "schema": "Flashcard",
+      "description": "User flashcards"
+    },
+    "/materials/{materialId}": {
+      "schema": "Material",
+      "description": "User study materials"
+    }
+  }
+}
